@@ -171,7 +171,7 @@
 	- `Id`
 		- у нас id - это uuid строка
 		- `Id(T)` означает, что это id ресурса T
-	- IsoDateTime
+	- `IsoDateTime`
 		- строка с датой и временем в формате iso
 	- `PaginationPage<T>`
 		- ```js
@@ -190,13 +190,13 @@
 		- одно из
 			- Posted
 			- Hidden
-	- ExpertApplicationStatus
+	- `ExpertApplicationStatus`
 		- одно из
 			- NotSent
 			- Sent
 			- AcceptedForReview
 			- Reviewed
-	- EventType
+	- `EventType`
 		- одно из
 			- Offline
 			- Online
