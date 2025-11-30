@@ -104,7 +104,7 @@
 				    // 405 Method Not Allowed
 				    409 Conflict
 				    // 410 Gone
-				    // 422 Unprocessable Entity
+				    422 Unprocessable Entity
 				    // 429 Too Many Reques
 				5xx
 				    // 500 Internal Server Error
@@ -215,6 +215,23 @@
 			- Sent
 			- AcceptedForReview
 			- Reviewed
+	- `ExpertApplicationActionType`
+		- возможные экшоны и их доп.поля (т.е. `action: other`):
+			- ```js
+				"Created": null
+				"Sent": null
+				"CanceledSending": null
+				"Accepted": {
+					AcceptedBy: Id(User),
+					message: str,
+				}
+				"СanceledAcceptance": null
+				"Reviewed": {
+					isApproved: Bool,
+					resolutionMessage: str?, // если принято, то сообщение писать незачем, оно должно быть null
+				}
+				"СanceledReview": null
+			  ```
 	- `EventType`
 		- одно из
 			- Offline
@@ -326,6 +343,7 @@
 				// 1й этап: создание
 				id: Id, // управляется сервером
 				status: ExpertApplicationStatus // управляется сервером
+				createdBy: Id(User) // управляется сервером
 				message: str,
 				
 				// 2й этап: отправка, поля не добавляются
@@ -362,26 +380,11 @@
 				applicationId: Id(ExpertApplication), // управляется сервером
 				datetime: IsoDateTime, // управляется сервером
 				
-				action: ExpertApplicationAction, // управляется сервером
+				action: ExpertApplicationActionType, // управляется сервером
 				other: JSONB? // управляется сервером
 			}
 		  ```
-		- возможные экшоны и их доп.поля (т.е. `action: other`):
-			- ```js
-				"Created": null
-				"Sended": null
-				"CanceledSending": null
-				"Accepted": {
-					AcceptedBy: Id(User),
-					message: str,
-				}
-				"СanceledAcceptance": null
-				"Reviewed": {
-					isApproved: Bool,
-					resolutionMessage: str,
-				}
-				"СanceledReview": null
-			  ```
+
 
 - /api/v0
 	- /auth - логика связанная с авторизацией, представлена в виде контроллеров, а не ресурсов
@@ -444,7 +447,7 @@
 		- /changePassword (POST)
 			- доступ: `logged_in`
 			- тело: `{ old_password: ..., new_password: ... }`
-			- ответы: 204/400
+			- ответы: 204/400/422 - если пароль слишком слабый
 		- %% в будущем можно запрашивать подтверждение по почте для смены пароля %%
 			- /sendVerificationEmailForResetPassword (POST) - отправляет на почту ссылку для сброса пароля
 				- доступ: для всех
@@ -606,13 +609,13 @@
 				- 403 - чужой айдишник
 				- 404 - нет курса или пользователя
 				- 409 - уже записан
-		- ?{параметры пагинации}&user={userId}&{course/event}={{courseId}/{eventId}} (GET)
+		- ?{параметры пагинации}&userId={userId}&{courseId/eventId}={{courseId}/{eventId}} (GET)
 			- доступ:
-				- Если указан `user`, то доступно только этому юзеру
-				- Если `user` не указан, то доступно только админам
+				- Если указан `userId`, то доступно только этому юзеру
+				- Если `userId` не указан, то доступно только админам
 			- параметры (кроме пагинации):
-				- `user: Id(User)?` - получение регистраций данного юзера
-				- `course={courseId}` или `event={eventId}` - получений регистраций на данное мероприятие
+				- `userId: Id(User)?` - получение регистраций данного юзера
+				- `courseId={courseId}` или `eventId={eventId}` - получений регистраций на данное мероприятие
 				- указать оба эти параметра можно, хоть и не особо осмысленно - вернется регистрация данного пользователя на данное мероприятие (или ошибка, если он не зареган)
 			- ответы:
 				- 200 -> `PaginationPage<EventRegistration/CourseRegistration>`
@@ -661,6 +664,7 @@
 			- ответы:
 				- 200 -> `PaginationPage<Post>`
 				- 400 - в параметрах
+				- 403 - нет доступа
 				- 422 - в параметрах
 		- /{id} (GET) - получение поста по id
 			- доступ:
@@ -779,7 +783,7 @@
 			- ответы: 204, 409 - если статус не Sent
 		- /{id}/accept (POST) - взять на рассмотрение (и сохранить нужный экшон в истории)
 			- доступ: любой `admin`
-			- эффекты: заводит таймер на N минут, после которого произойдет /cancelAcceptance
+			- %% на будущее: эффекты: заводит таймер на N минут, после которого произойдет /cancelAcceptance %%
 			- ответы:
 				- 200 -> `{bookedFor: int (minutes)}`
 				- 409 - если статус не Sent
