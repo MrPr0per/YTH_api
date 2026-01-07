@@ -257,67 +257,53 @@
 	- `User`
 		- ```js
 			{
-				"id": Id, // управляется сервером
-				"username": str,
-				"role": UserRole // управляется сервером, по умолчанию Student
+				id: Id, // управляется сервером
+				username: str,
+				role: UserRole // управляется сервером, по умолчанию Student
 			}
 		  ```
 	- `Course`
 		- ```js
 			{
-				"id": Id, // управляется сервером
-				"сreatedAt": IsoDateTime, // управляется сервером
-				"name": str,
-				"description": str,
-				"link": str,
-				// "category": Id(Category),
-				// "tags": [Id(Tag)],
+				id: Id, // управляется сервером
+				сreatedAt: IsoDateTime, // управляется сервером
+				name: str,
+				description: str,
+				coverUrl/coverBase64: str, // при чтении url при записи base64
+				link: str,
 			}
 		  ```
 	- `Event`
 		- ```js
 			{
-				"id": Id, // управляется сервером
-				"сreatedAt": IsoDateTime, // управляется сервером
-				"name": str,
-				"description": str,
-				"date": IsoDateTime,
-				"adress": str?,
-				"type": EventType,
-			}
-		  ```
-	- `Category`
-		- ```js
-			{
-				"id": Id, // управляется сервером
-				"name": str
-			}
-		  ```
-	- `Tag`
-		- ```js
-			{
-				"id": Id, // управляется сервером
-				"name": str
+				id: Id, // управляется сервером
+				сreatedAt: IsoDateTime, // управляется сервером
+				name: str,
+				description: str,
+				coverUrl/coverBase64: str, // при чтении url при записи base64
+				date: IsoDateTime,
+				adress: str?,
+				type: EventType,
 			}
 		  ```
 	- `EventRegistration`
 		- регистрация на евент
 		- ```js
 			{
-				"id": Id, // управляется сервером
-				"сreatedAt": IsoDateTime, // управляется сервером
-				"user": Id(User),
-				"event": Id(Event)
+				id: Id, // управляется сервером
+				сreatedAt: IsoDateTime, // управляется сервером
+				user: Id(User),
+				event: Id(Event)
 			}
 		  ```
 	- `CourseRegistration`
 		- регистрация на курс
 		- ```js
 			{
-				"id": Id, // управляется сервером
-				"сreatedAt": IsoDateTime, // управляется сервером
-				"user": Id(User),
-				"course": Id(Course)
+				id: Id, // управляется сервером
+				сreatedAt: IsoDateTime, // управляется сервером
+				user: Id(User),
+				course: Id(Course)
 			}
 		  ```
 	- `Post`
@@ -326,12 +312,10 @@
 				id: Id, // управляется сервером
 				сreatedAt: IsoDateTime, // управляется сервером
 				author: Id(User), // управляется сервером
-			    // category: Id(Category),
 			    title: str, // < 512 символов
-			    // shortDescription: str,
 			    description: str,
+				coverUrl/coverBase64: str, // при чтении url при записи base64
 			    status: PostStatus, // по умолчанию Posted
-			    // tag: Id(PostTag)
 			}
 		  ```
 	- `Notification`
@@ -1160,7 +1144,4 @@
 				- ошибки входа/доступа - 401/403
 				- ошибки пагинации - 400/404/422
 				- общие - 429/500
-
-
-
 
