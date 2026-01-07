@@ -271,6 +271,7 @@
 				description: str,
 				coverUrl/coverBase64: str, // при чтении url при записи base64
 				link: str,
+				price: decimal,
 			}
 		  ```
 	- `Event`
